@@ -23,7 +23,13 @@ app.get("*", (req, res) => {
   if (req.path === "/") {
     htmlContent = htmlContent.replace(
       /<\/head>/,
-      `<meta property="og:image" content="https://i.ytimg.com/vi/h6gXtS6jSX0/hq720.jpg?sqp=-oaymwE7CK4FEIIDSFryq4qpAy0IARUAAAAAGAElAADIQj0AgKJD8AEB-AGOCIAC0AWKAgwIABABGGUgVyhMMA8=&rs=AOn4CLA7lzuyQnNM4A_6Q733tZQsJuJDRg" />\n</head>`
+      `<meta property="og:image" content="https://play-lh.googleusercontent.com/OuuvGhutMyRbSMwUYX-XT2ap1Dd4XBdu2FwpDnZhL7Uijx0yD_BAHqJVjgVDGlL_xIj6=w3840-h2160-rw" />\n</head>`
+    );
+
+    // Replace the existing title tag
+    htmlContent = htmlContent.replace(
+      /<title>.*<\/title>/,
+      `<title>Coffee Web</title>`
     );
   }
 
