@@ -52,6 +52,8 @@ app.get("*", (req, res) => {
       /<title>.*<\/title>/,
       `<title>CoffeeWeb</title>`
     );
+
+    res.send(htmlContent);
   }
 
   if (req.path === "/coffeenewsfeeds") {
@@ -84,9 +86,7 @@ app.get("*", (req, res) => {
     }, 1000); // 1-second delay
   }
 
-  console.log(htmlContent);
-
-  res.send(htmlContent);
+  // res.send(htmlContent);
 });
 
 app.listen(5001, () => {
