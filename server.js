@@ -21,15 +21,15 @@ app.get("*", (req, res) => {
   let htmlContent = fs.readFileSync(filePath, "utf8");
 
   if (req.path === "/") {
-    htmlContent = htmlContent.replace(
-      /<\/head>/,
-      `<meta property="og:image" content="https://coffeeweb.s3.amazonaws.com/ttegzwmq.hjf-CoffeeWeb_Logo_White_Background_Blue_Text-(1).png" />\n</head>`
-    );
-
     // Replace the existing title tag
     htmlContent = htmlContent.replace(
       /<title>.*<\/title>/,
       `<title>Coffee Web</title>`
+    );
+
+    htmlContent = htmlContent.replace(
+      /<\/head>/,
+      `<meta property="og:image" content="https://coffeeweb.s3.amazonaws.com/ttegzwmq.hjf-CoffeeWeb_Logo_White_Background_Blue_Text-(1).png" />\n</head>`
     );
 
     // Replace the existing meta description tag.
