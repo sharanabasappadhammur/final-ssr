@@ -32,7 +32,7 @@ app.get("*", (req, res) => {
       `<title>Coffee Web</title>`
     );
 
-    // Replace the existing meta description tag
+    // Replace the existing meta description tag.
     htmlContent = htmlContent.replace(
       /<meta name="description" content=".*" \/>/,
       `<meta name="description" content="This app provides end-to-end information about the Global Coffee Industry." />`
