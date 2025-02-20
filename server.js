@@ -20,22 +20,37 @@ app.get("*", (req, res) => {
   const filePath = path.join(__dirname, "build", "index.html");
   let htmlContent = fs.readFileSync(filePath, "utf8");
 
+  // if (req.path === "/") {
+  //   // Replace the existing title tag
+  //   htmlContent = htmlContent.replace(
+  //     /<title>.*<\/title>/,
+  //     `<title>Coffee Web</title>`
+  //   );
+
+  //   htmlContent = htmlContent.replace(
+  //     /<\/head>/,
+  //     `<meta property="og:image" content="https://coffeeweb.s3.amazonaws.com/ttegzwmq.hjf-CoffeeWeb_Logo_White_Background_Blue_Text-(1).png" />\n</head>`
+  //   );
+
+  //   // Replace the existing meta description tag.
+  //   htmlContent = htmlContent.replace(
+  //     /<meta name="description" content=".*" \/>/,
+  //     `<meta name="description" content="This app provides end-to-end information about the Global Coffee Industry." />`
+  //   );
+  // }
+
   if (req.path === "/") {
+    // Replace the closing head tag with the og:image and description meta tags
+    htmlContent = htmlContent.replace(
+      /<\/head>/,
+      `<meta property="og:image" content="https://coffeeweb.s3.amazonaws.com/ttegzwmq.hjf-CoffeeWeb_Logo_White_Background_Blue_Text-(1).png" />\n` +
+        `<meta name="description" content="This app provides end-to-end information about the Global Coffee Industry." />\n</head>`
+    );
+
     // Replace the existing title tag
     htmlContent = htmlContent.replace(
       /<title>.*<\/title>/,
       `<title>Coffee Web</title>`
-    );
-
-    htmlContent = htmlContent.replace(
-      /<\/head>/,
-      `<meta property="og:image" content="https://coffeeweb.s3.amazonaws.com/ttegzwmq.hjf-CoffeeWeb_Logo_White_Background_Blue_Text-(1).png" />\n</head>`
-    );
-
-    // Replace the existing meta description tag.
-    htmlContent = htmlContent.replace(
-      /<meta name="description" content=".*" \/>/,
-      `<meta name="description" content="This app provides end-to-end information about the Global Coffee Industry." />`
     );
   }
 
