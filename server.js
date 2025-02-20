@@ -50,15 +50,38 @@ app.get("*", (req, res) => {
     // Replace the existing title tag
     htmlContent = htmlContent.replace(
       /<title>.*<\/title>/,
-      `<title>Coffee Web</title>`
+      `<title>CoffeeWeb</title>`
     );
   }
 
   if (req.path === "/coffeenewsfeeds") {
-    htmlContent = htmlContent.replace(
-      /<\/head>/,
-      `<meta property="og:image" content="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQd8P9RV-96KMhJK6EwQS-XoN1kdyF663o7EW0Eiu9LA1yliUOw-GkfOyOG2RTSqYhepjo&usqp=CAU" />\n</head>`
-    );
+    const images = [
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTMbxvympacKlPdxFnB3VE_j6o1nngjvGRnQ&s",
+      "https://sample-videos.com/img/Sample-png-image-100kb.png",
+      "https://i.pinimg.com/736x/94/ba/f8/94baf875f3b3f87b99c3a4a01e0503fe.jpg"
+    ];
+
+    // Simulate a dummy API call with a 1-second delay
+    setTimeout(() => {
+      // Select a random image from the array
+      const selectedImage = images[Math.floor(Math.random() * images.length)];
+
+      // Replace the closing head tag with the og:image and description meta tags
+      htmlContent = htmlContent.replace(
+        /<\/head>/,
+        `<meta property="og:image" content="${selectedImage}" />\n` +
+          `<meta name="description" content="This is coffee news feeds" />\n</head>`
+      );
+
+      // Replace the existing title tag
+      htmlContent = htmlContent.replace(
+        /<title>.*<\/title>/,
+        `<title>Coffee News Feeds</title>`
+      );
+
+      // Send the modified HTML content as the response (or continue with your logic)
+      res.send(htmlContent);
+    }, 1000); // 1-second delay
   }
 
   console.log(htmlContent);
