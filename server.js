@@ -23,7 +23,7 @@ app.get("*", (req, res) => {
   if (req.path === "/") {
     htmlContent = htmlContent.replace(
       /<\/head>/,
-      `<meta property="og:image" content="https://play-lh.googleusercontent.com/OuuvGhutMyRbSMwUYX-XT2ap1Dd4XBdu2FwpDnZhL7Uijx0yD_BAHqJVjgVDGlL_xIj6=w3840-h2160-rw" />\n</head>`
+      `<meta property="og:image" content="https://coffeeweb.s3.amazonaws.com/1avmd1x5.3ne-Screenshot-2025-02-20-233752.png" />\n</head>`
     );
 
     // Replace the existing title tag
