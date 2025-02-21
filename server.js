@@ -99,7 +99,7 @@ app.get("*", (req, res) => {
   // res.send(htmlContent);
   const axios = require("axios");
 
-  if (req.path === "/coffeenewsfeeds") {
+  if (req.path.includes("/coffeenewsfeeds")) {
     const apiUrl = `https://dev-api.devptest.com/api/news/GetNewsAndMediaById/${req.query.newsId}`;
     const token =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIxNDc0ODM2NDYiLCJuYmYiOjE3Mzk5NjA5MjksImV4cCI6MTc0MDU2NTcyOSwiaWF0IjoxNzM5OTYwOTI5fQ.-E9DZ0iLiVpa_7J_46ajwO9lxUv-eII0V6dpikjExaA"; // Replace with the actual token
@@ -128,6 +128,8 @@ app.get("*", (req, res) => {
           `<meta property="og:image" content="${selectedImage}" />\n` +
             `<meta name="description" content="${shortDescription}" />\n</head>`
         );
+
+        console.log(selectedImage);
 
         // Replace the existing title tag
         htmlContent = htmlContent.replace(
