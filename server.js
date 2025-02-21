@@ -18,7 +18,7 @@ app.get("*", (req, res) => {
   let htmlContent = fs.readFileSync(filePath, "utf8");
 
   if (req.path.includes("/coffeenewsfeeds") && req.query.newsId) {
-    const apiUrl = `https://dev-api.devptest.com/api/news/GetNewsAndMediaById/${req.query.newsId}`;
+    const apiUrl = `https://dev-api.devptest.com/api/news/GetNewsAndMediaById/${"req.query.newsId"}`;
     const token =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIxNDc0ODM2NDYiLCJuYmYiOjE3Mzk5NjA5MjksImV4cCI6MTc0MDU2NTcyOSwiaWF0IjoxNzM5OTYwOTI5fQ.-E9DZ0iLiVpa_7J_46ajwO9lxUv-eII0V6dpikjExaA"; // Replace with the actual token
 
