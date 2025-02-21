@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
+const axios = require("axios");
 
 const app = express();
 
@@ -56,37 +57,93 @@ app.get("*", (req, res) => {
     res.send(htmlContent);
   }
 
-  if (req.path === "/coffeenewsfeeds") {
-    const images = [
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTMbxvympacKlPdxFnB3VE_j6o1nngjvGRnQ&s",
-      "https://sample-videos.com/img/Sample-png-image-100kb.png",
-      "https://i.pinimg.com/736x/94/ba/f8/94baf875f3b3f87b99c3a4a01e0503fe.jpg"
-    ];
+  // if (req.path === "/coffeenewsfeeds") {
+  //   // Extract the newsId from the query parameters
+  //   const newsId = req.query.newsId;
 
-    // Simulate a dummy API call with a 1-second delay
-    setTimeout(() => {
-      // Select a random image from the array
-      const selectedImage = images[Math.floor(Math.random() * images.length)];
+  //   if (newsId) {
+  //     console.log("News ID:", newsId);
+  //   } else {
+  //     console.log("No newsId found in the query parameters.");
+  //   }
 
-      // Replace the closing head tag with the og:image and description meta tags
-      htmlContent = htmlContent.replace(
-        /<\/head>/,
-        `<meta property="og:image" content="${selectedImage}" />\n` +
-          `<meta name="description" content="This is coffee news feeds" />\n</head>`
-      );
+  //   const images = [
+  //     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSTMbxvympacKlPdxFnB3VE_j6o1nngjvGRnQ&s",
+  //     "https://sample-videos.com/img/Sample-png-image-100kb.png",
+  //     "https://i.pinimg.com/736x/94/ba/f8/94baf875f3b3f87b99c3a4a01e0503fe.jpg"
+  //   ];
 
-      // Replace the existing title tag
-      htmlContent = htmlContent.replace(
-        /<title>.*<\/title>/,
-        `<title>Coffee News Feeds</title>`
-      );
+  //   // Simulate a dummy API call with a 1-second delay
+  //   setTimeout(() => {
+  //     // Select a random image from the array
+  //     const selectedImage = images[Math.floor(Math.random() * images.length)];
 
-      // Send the modified HTML content as the response (or continue with your logic)
-      res.send(htmlContent);
-    }, 1000); // 1-second delay
-  }
+  //     // Replace the closing head tag with the og:image and description meta tags
+  //     htmlContent = htmlContent.replace(
+  //       /<\/head>/,
+  //       `<meta property="og:image" content="${selectedImage}" />\n` +
+  //         `<meta name="description" content="This is coffee news feeds" />\n</head>`
+  //     );
+
+  //     // Replace the existing title tag
+  //     htmlContent = htmlContent.replace(
+  //       /<title>.*<\/title>/,
+  //       `<title>Coffee News Feeds</title>`
+  //     );
+
+  //     // Send the modified HTML content as the response (or continue with your logic)
+  //     res.send(htmlContent);
+  //   }, 1000); // 1-second delay
+  // }
 
   // res.send(htmlContent);
+  const axios = require("axios");
+
+  if (req.path === "/coffeenewsfeeds") {
+    const apiUrl = `https://dev-api.devptest.com/api/news/GetNewsAndMediaById/${req.query.newsId}`;
+    const token =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIxNDc0ODM2NDYiLCJuYmYiOjE3Mzk5NjA5MjksImV4cCI6MTc0MDU2NTcyOSwiaWF0IjoxNzM5OTYwOTI5fQ.-E9DZ0iLiVpa_7J_46ajwO9lxUv-eII0V6dpikjExaA"; // Replace with the actual token
+
+    // Make the API call with the token in the headers
+    axios
+      .get(apiUrl, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      .then((response) => {
+        const newsData = response.data.returnLst[0];
+
+        // Assume the API response contains image and description fields
+        const selectedImage =
+          newsData.nwsFeedMedia[0].pathOfMedia ||
+          "https://coffeeweb.s3.amazonaws.com/default-image.png";
+        const shortDescription =
+          newsData.shortDescription || "This is coffee news feeds";
+        const subject = newsData.subject || "This is coffee news feeds";
+
+        // Replace the closing head tag with the og:image and description meta tags
+        htmlContent = htmlContent.replace(
+          /<\/head>/,
+          `<meta property="og:image" content="${selectedImage}" />\n` +
+            `<meta name="description" content="${shortDescription}" />\n</head>`
+        );
+
+        // Replace the existing title tag
+        htmlContent = htmlContent.replace(
+          /<title>.*<\/title>/,
+          `<title>${subject}</title>`
+        );
+
+        // Send the modified HTML content as the response
+        res.send(htmlContent);
+      })
+      .catch((error) => {
+        console.error("Error fetching news data:", error);
+        // Handle the error, maybe send a default response or an error page
+        res.status(500).send("Error loading news feed");
+      });
+  }
 });
 
 app.listen(5001, () => {
