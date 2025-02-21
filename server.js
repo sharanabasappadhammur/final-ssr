@@ -51,19 +51,22 @@ app.get("*", (req, res) => {
       })
       .catch((error) => {
         // Replace the closing head tag with the og:image and description meta tags
-        htmlContent = htmlContent.replace(
-          /<\/head>/,
-          `<meta property="og:image" content="https://coffeeweb.s3.amazonaws.com/ttegzwmq.hjf-CoffeeWeb_Logo_White_Background_Blue_Text-(1).png" />\n` +
-            `<meta name="description" content="This app provides end-to-end information about the Global Coffee Industry." />\n</head>`
-        );
+        // htmlContent = htmlContent.replace(
+        //   /<\/head>/,
+        //   `<meta property="og:image" content="https://coffeeweb.s3.amazonaws.com/ttegzwmq.hjf-CoffeeWeb_Logo_White_Background_Blue_Text-(1).png" />\n` +
+        //     `<meta name="description" content="This app provides end-to-end information about the Global Coffee Industry." />\n</head>`
+        // );
 
-        // Replace the existing title tag
-        htmlContent = htmlContent.replace(
-          /<title>.*<\/title>/,
-          `<title>CoffeeWeb</title>`
-        );
+        // // Replace the existing title tag
+        // htmlContent = htmlContent.replace(
+        //   /<title>.*<\/title>/,
+        //   `<title>CoffeeWeb</title>`
+        // );
 
-        res.send(htmlContent);
+        // res.send(htmlContent);
+
+        console.error("Error fetching news data:", error);
+        res.status(500).send("Error loading news feed");
       });
   } else {
     // Replace the closing head tag with the og:image and description meta tags
