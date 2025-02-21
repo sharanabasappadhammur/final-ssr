@@ -97,7 +97,6 @@ app.get("*", (req, res) => {
   // }
 
   // res.send(htmlContent);
-  const axios = require("axios");
 
   if (req.path.includes("/coffeenewsfeeds")) {
     const apiUrl = `https://dev-api.devptest.com/api/news/GetNewsAndMediaById/${req.query.newsId}`;
@@ -116,7 +115,7 @@ app.get("*", (req, res) => {
 
         // Assume the API response contains image and description fields
         const selectedImage =
-          newsData.nwsFeedMedia[0].pathOfMedia ||
+          "https://camo.githubusercontent.com/c2fd2f94aa55544327fc8ed8901aedb2eec8e3535243452b43646eb8086efe1a/68747470733a2f2f796176757a63656c696b65722e6769746875622e696f2f73616d706c652d696d616765732f696d6167652d34342e6a7067" ||
           "https://coffeeweb.s3.amazonaws.com/default-image.png";
         const shortDescription =
           newsData.shortDescription || "This is coffee news feeds";
