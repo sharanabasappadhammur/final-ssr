@@ -65,7 +65,7 @@ app.get("*", (req, res) => {
 
         res.send(htmlContent);
 
-        // console.error("Error fetching news data:", error);
+        // console.error("Error fetching news data:", error);.
         // res.status(500).send("Error loading news feed");
       });
   } else {
