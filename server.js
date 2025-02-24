@@ -31,11 +31,13 @@ app.get("*", (req, res) => {
       .then((response) => {
         const newsData = response.data.returnLst[0];
         const selectedImage =
-          newsData.nwsFeedMedia[0].pathOfMedia ||
+          newsData.nwsFeedMedia[0].webimgpath ||
           "https://coffeeweb.s3.amazonaws.com/default-image.png";
         const shortDescription =
           newsData.shortDescription || "This is coffee news feeds";
         const subject = newsData.subject || "This is coffee news feeds";
+
+        console.log(selectedImage);
 
         htmlContent = htmlContent.replace(
           /<\/head>/,
