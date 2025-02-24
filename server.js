@@ -31,7 +31,7 @@ app.get("*", (req, res) => {
       .then((response) => {
         const newsData = response.data.returnLst[0];
         const selectedImage =
-          "https://camo.githubusercontent.com/c2fd2f94aa55544327fc8ed8901aedb2eec8e3535243452b43646eb8086efe1a/68747470733a2f2f796176757a63656c696b65722e6769746875622e696f2f73616d706c652d696d616765732f696d6167652d34342e6a7067" ||
+          newsData.nwsFeedMedia[0].pathOfMedia ||
           "https://coffeeweb.s3.amazonaws.com/default-image.png";
         const shortDescription =
           newsData.shortDescription || "This is coffee news feeds";
