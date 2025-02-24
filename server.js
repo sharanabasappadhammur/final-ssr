@@ -32,7 +32,7 @@ app.get("*", (req, res) => {
         const newsData = response.data.returnLst[0];
         const selectedImage =
           newsData.nwsFeedMedia[0].webimgpath ||
-          "https://coffeeweb.s3.amazonaws.com/default-image.png";
+          "https://coffeeweb.s3.ap-south-1.amazonaws.com/coffeeweb_menu_icons/CoffeeWeb_Logo_White_Background_Blue_Text.png";
         const shortDescription =
           newsData.shortDescription || "This is coffee news feeds";
         const subject = newsData.subject || "This is coffee news feeds";
