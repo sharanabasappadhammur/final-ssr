@@ -147,9 +147,10 @@ app.get("*", async (req, res) => {
         .toBuffer();
 
       // Create a base64 version of the compressed image
-      const compressedImageBase64 = `data:image/jpeg;base64,${compressedImageBuffer.toString(
-        "base64"
-      )}`;
+      const compressedImageBase64 = `https://coffeeweb.s3.amazonaws.com/sc4asb14.0fi-download.jpeg`;
+      // const compressedImageBase64 = `data:image/jpeg;base64,${compressedImageBuffer.toString(
+      //   "base64"
+      // )}`;
 
       // console.log(originalImageUrl);
       console.log(compressedImageBase64);
