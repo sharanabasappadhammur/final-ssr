@@ -177,22 +177,6 @@ app.get("*", async (req, res) => {
         newsData.shortDescription || "This is coffee news feeds";
       const subject = newsData.subject || "This is coffee news feeds";
 
-      // Fetch and compress the image on the fly using Sharp
-      const imageResponse = await axios({
-        url: originalImageUrl,
-        responseType: "arraybuffer"
-      });
-
-      const compressedImageBuffer = await sharp(imageResponse.data)
-        .resize(500) // Resize the image to 300px width (adjust as needed)
-        .jpeg({ quality: 90 }) // Adjust quality (70) for compression
-        .toBuffer();
-
-      // Create a base64 version of the compressed image
-      const compressedImageBase64 = `data:image/jpeg;base64,${compressedImageBuffer.toString(
-        "base64"
-      )}`;
-
       // console.log(originalImageUrl);
       // console.log(compressedImageBase64);
 
