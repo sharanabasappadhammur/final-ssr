@@ -23,66 +23,74 @@
 //     const token =
 //       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIxNDc0ODM2NDYiLCJuYmYiOjE3Mzk5NjA5MjksImV4cCI6MTc0MDU2NTcyOSwiaWF0IjoxNzM5OTYwOTI5fQ.-E9DZ0iLiVpa_7J_46ajwO9lxUv-eII0V6dpikjExaA"; // Replace with the actual token
 
-//     axios
-//       .get(apiUrl, {
+//     try {
+//       const response = await axios.get(apiUrl, {
 //         headers: {
 //           Authorization: `Bearer ${token}`
 //         }
-//       })
-//       .then((response) => {
-//         const newsData = response.data.returnLst[0];
-//         const selectedImage =
-//           newsData.nwsFeedMedia[0].webimgpath ||
-//           "https://coffeeweb.s3.ap-south-1.amazonaws.com/coffeeweb_menu_icons/CoffeeWeb_Logo_White_Background_Blue_Text.png";
-
-//         // Fetch and compress the image on the fly using Sharp
-
-//         const shortDescription =
-//           newsData.shortDescription || "This is coffee news feeds";
-//         const subject = newsData.subject || "This is coffee news feeds";
-
-//         console.log(selectedImage);
-
-//         htmlContent = htmlContent.replace(
-//           /<\/head>/,
-//           `<meta property="og:image" content="${selectedImage}" />\n` +
-//             `<meta name="description" content="${shortDescription}" />\n</head>`
-//         );
-//         htmlContent = htmlContent.replace(
-//           /<title>.*<\/title>/,
-//           `<title>${subject}</title>`
-//         );
-
-//         res.send(htmlContent);
-//       })
-//       .catch((error) => {
-//         // Replace the closing head tag with the og:image and description meta tags
-//         htmlContent = htmlContent.replace(
-//           /<\/head>/,
-//           `<meta property="og:image" content="https://coffeeweb.s3.amazonaws.com/ttegzwmq.hjf-CoffeeWeb_Logo_White_Background_Blue_Text-(1).png" />\n` +
-//             `<meta name="description" content="This app provides end-to-end information about the Global Coffee Industry." />\n</head>`
-//         );
-
-//         // Replace the existing title tag
-//         htmlContent = htmlContent.replace(
-//           /<title>.*<\/title>/,
-//           `<title>CoffeeWeb</title>`
-//         );
-
-//         res.send(htmlContent);
-
-//         // console.error("Error fetching news data:", error);.
-//         // res.status(500).send("Error loading news feed");
 //       });
+//       const newsData = response.data.returnLst[0];
+//       const originalImageUrl =
+//         newsData.nwsFeedMedia[0].webimgpath ||
+//         // "https://coffeeweb.s3.ap-south-1.amazonaws.com/coffeenewsfeeds/Certified+Lots.png" ||
+//         "https://coffeeweb.s3.ap-south-1.amazonaws.com/coffeeweb_menu_icons/CoffeeWeb_Logo_White_Background_Blue_Text.png";
+//       const shortDescription =
+//         newsData.shortDescription || "This is coffee news feeds";
+//       const subject = newsData.subject || "This is coffee news feeds";
+
+//       // Fetch and compress the image on the fly using Sharp
+//       const imageResponse = await axios({
+//         url: originalImageUrl,
+//         responseType: "arraybuffer"
+//       });
+
+//       const compressedImageBuffer = await sharp(imageResponse.data)
+//         .resize(500) // Resize the image to 300px width (adjust as needed)
+//         .jpeg({ quality: 90 }) // Adjust quality (70) for compression
+//         .toBuffer();
+
+//       // Create a base64 version of the compressed image
+//       const compressedImageBase64 = `data:image/jpeg;base64,${compressedImageBuffer.toString(
+//         "base64"
+//       )}`;
+
+//       // console.log(originalImageUrl);
+//       console.log(compressedImageBase64);
+
+//       htmlContent = htmlContent.replace(
+//         /<\/head>/,
+//         `<meta property="og:image" content="${compressedImageBase64}" />\n` +
+//           `<meta name="description" content="${shortDescription}" />\n</head>`
+//       );
+//       htmlContent = htmlContent.replace(
+//         /<title>.*<\/title>/,
+//         `<title>${subject}</title>`
+//       );
+
+//       res.send(htmlContent);
+//     } catch (error) {
+//       // In case of error, fallback to default image and metadata
+//       htmlContent = htmlContent.replace(
+//         /<\/head>/,
+//         `<meta property="og:image" content="https://coffeeweb.s3.amazonaws.com/ttegzwmq.hjf-CoffeeWeb_Logo_White_Background_Blue_Text-(1).png" />\n` +
+//           `<meta name="description" content="This app provides end-to-end information about the Global Coffee Industry." />\n</head>`
+//       );
+
+//       htmlContent = htmlContent.replace(
+//         /<title>.*<\/title>/,
+//         `<title>CoffeeWeb</title>`
+//       );
+
+//       res.send(htmlContent);
+//     }
 //   } else {
-//     // Replace the closing head tag with the og:image and description meta tags
+//     // Default fallback for non-news pages
 //     htmlContent = htmlContent.replace(
 //       /<\/head>/,
 //       `<meta property="og:image" content="https://coffeeweb.s3.amazonaws.com/ttegzwmq.hjf-CoffeeWeb_Logo_White_Background_Blue_Text-(1).png" />\n` +
 //         `<meta name="description" content="This app provides end-to-end information about the Global Coffee Industry." />\n</head>`
 //     );
 
-//     // Replace the existing title tag
 //     htmlContent = htmlContent.replace(
 //       /<title>.*<\/title>/,
 //       `<title>CoffeeWeb</title>`
@@ -108,6 +116,40 @@ app.use((req, res, next) => {
     next();
   } else {
     express.static(path.join(__dirname, "./build"))(req, res, next);
+  }
+});
+
+app.get("/image-proxy", async (req, res) => {
+  const { imageUrl, width, height, quality } = req.query;
+
+  try {
+    // Fetch the image from the URL
+    const response = await axios({
+      url:
+        imageUrl ||
+        "https://coffeeweb.s3.ap-south-1.amazonaws.com/coffeenewsfeeds/Vietnam+Diff.png",
+      responseType: "arraybuffer"
+    });
+
+    const imageBuffer = Buffer.from(response.data, "binary");
+
+    console.log("tetwtst");
+
+    // Resize and compress the image using sharp
+    const outputBuffer = await sharp(imageBuffer)
+      .resize({
+        width: parseInt(width) || 300,
+        height: parseInt(height) || 200
+      })
+      .jpeg({ quality: parseInt(quality) || 80 }) // Optional quality compression for JPEG
+      .toBuffer();
+
+    // Send the processed image
+    res.set("Content-Type", "image/jpeg");
+    res.send(outputBuffer);
+  } catch (error) {
+    console.error("Error processing image:", error.message);
+    res.status(500).send("Error processing image");
   }
 });
 
@@ -147,17 +189,17 @@ app.get("*", async (req, res) => {
         .toBuffer();
 
       // Create a base64 version of the compressed image
-      const compressedImageBase64 = `https://coffeeweb.s3.amazonaws.com/sc4asb14.0fi-download.jpeg`;
-      // const compressedImageBase64 = `data:image/jpeg;base64,${compressedImageBuffer.toString(
-      //   "base64"
-      // )}`;
+      const compressedImageBase64 = `data:image/jpeg;base64,${compressedImageBuffer.toString(
+        "base64"
+      )}`;
 
       // console.log(originalImageUrl);
-      console.log(compressedImageBase64);
+      // console.log(compressedImageBase64);
 
       htmlContent = htmlContent.replace(
         /<\/head>/,
-        `<meta property="og:image" content="${compressedImageBase64}" />\n` +
+        // `<meta property="og:image" content="${compressedImageBase64}" />\n` +
+        `<meta property="og:image" content="http://localhost:5000/image-proxy?https://coffeeweb.s3.ap-south-1.amazonaws.com/coffeenewsfeeds/Vietnam+Diff.png&width=500&height=300&quality=80" />\n` +
           `<meta name="description" content="${shortDescription}" />\n</head>`
       );
       htmlContent = htmlContent.replace(
