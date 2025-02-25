@@ -183,7 +183,7 @@ app.get("*", async (req, res) => {
       htmlContent = htmlContent.replace(
         /<\/head>/,
         // `<meta property="og:image" content="${compressedImageBase64}" />\n` +
-        `<meta property="og:image" content=https://final-ssr-production.up.railway.app/image-proxy?imageUrl=${newsData.nwsFeedMedia[0].webimgpath}&width=500&height=300&quality=80" />\n` +
+        `<meta property="og:image" content="https://final-ssr-production.up.railway.app/image-proxy?imageUrl=${newsData.nwsFeedMedia[0].webimgpath}&width=500&height=300&quality=80" />\n` +
           `<meta name="description" content="${shortDescription}" />\n</head>`
       );
       htmlContent = htmlContent.replace(
