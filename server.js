@@ -199,7 +199,7 @@ app.get("*", async (req, res) => {
       htmlContent = htmlContent.replace(
         /<\/head>/,
         // `<meta property="og:image" content="${compressedImageBase64}" />\n` +
-        `<meta property="og:image" content="http://localhost:5000/image-proxy?https://coffeeweb.s3.ap-south-1.amazonaws.com/coffeenewsfeeds/Vietnam+Diff.png&width=500&height=300&quality=80" />\n` +
+        `<meta property="og:image" content="https://final-ssr-production.up.railway.app/image-proxy?https://coffeeweb.s3.ap-south-1.amazonaws.com/coffeenewsfeeds/Vietnam+Diff.png&width=500&height=300&quality=80" />\n` +
           `<meta name="description" content="${shortDescription}" />\n</head>`
       );
       htmlContent = htmlContent.replace(
