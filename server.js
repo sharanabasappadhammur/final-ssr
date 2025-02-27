@@ -164,8 +164,18 @@ app.get("*", async (req, res) => {
       userAgent
     )
   ) {
-    // User agent is from a social media platform or a bot
-    res.send("Hello from a social media platform or a bot!");
+    htmlContent = htmlContent.replace(
+      /<\/head>/,
+      `<meta property="og:image" content="https://coffeeweb.s3.amazonaws.com/ttegzwmq.hjf-CoffeeWeb_Logo_White_Background_Blue_Text-(1).png" />\n` +
+        `<meta name="description" content="This app provides end-to-end information about the Global Coffee Industry." />\n</head>`
+    );
+
+    htmlContent = htmlContent.replace(
+      /<title>.*<\/title>/,
+      `<title>CoffeeWeb</title>`
+    );
+
+    res.send(htmlContent);
   } else if (/chrome|firefox|safari|edge|opera|msie|trident/i.test(userAgent)) {
     // User agent is a browser
     res.send("Hello from a browser!");
