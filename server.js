@@ -168,7 +168,7 @@ app.get("*", async (req, res) => {
   ) {
     const apiUrl = `https://dev-api.devptest.com/api/news/GetNewsAndMediaById/${req.query.newsId}`;
     const token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIxNDc0ODM2NDYiLCJuYmYiOjE3Mzk5NjA5MjksImV4cCI6MTc0MDU2NTcyOSwiaWF0IjoxNzM5OTYwOTI5fQ.-E9DZ0iLiVpa_7J_46ajwO9lxUv-eII0V6dpikjExaA"; // Replace with the actual token
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIxNDc0ODM2NDYiLCJuYmYiOjE3NDA0ODYxOTksImV4cCI6MTc0MTA5MDk5OSwiaWF0IjoxNzQwNDg2MTk5fQ.BG4EmnGyb_AW3ikpfcMDE1DqtTeuV4cJVdIBhhhLu7c"; // Replace with the actual token
 
     try {
       const response = await axios.get(apiUrl, {
@@ -201,6 +201,8 @@ app.get("*", async (req, res) => {
 
       res.send(htmlContent);
     } catch (error) {
+      console.log(error);
+
       // In case of error, fallback to default image and metadata
       htmlContent = htmlContent.replace(
         /<\/head>/,
