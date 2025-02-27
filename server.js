@@ -162,8 +162,61 @@ app.get("*", async (req, res) => {
   if (
     /facebook|fbav|fban|twitter|instagram|linkedin|whatsapp|snapchat|googlebot|bingbot|pinterest|reddit|tiktok/i.test(
       userAgent
-    )
+    ) &&
+    req.path.includes("/coffeenewsfeeds") &&
+    req.query.newsId
   ) {
+    const apiUrl = `https://dev-api.devptest.com/api/news/GetNewsAndMediaById/${req.query.newsId}`;
+    const token =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIxNDc0ODM2NDYiLCJuYmYiOjE3Mzk5NjA5MjksImV4cCI6MTc0MDU2NTcyOSwiaWF0IjoxNzM5OTYwOTI5fQ.-E9DZ0iLiVpa_7J_46ajwO9lxUv-eII0V6dpikjExaA"; // Replace with the actual token
+
+    try {
+      const response = await axios.get(apiUrl, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      const newsData = response.data.returnLst[0];
+      const originalImageUrl =
+        newsData.nwsFeedMedia[0].webimgpath ||
+        // "https://coffeeweb.s3.ap-south-1.amazonaws.com/coffeenewsfeeds/Certified+Lots.png" ||
+        "https://coffeeweb.s3.ap-south-1.amazonaws.com/coffeeweb_menu_icons/CoffeeWeb_Logo_White_Background_Blue_Text.png";
+      const shortDescription =
+        newsData.shortDescription || "This is coffee news feeds";
+      const subject = newsData.subject || "This is coffee news feeds";
+
+      // console.log(originalImageUrl);
+      // console.log(compressedImageBase64);
+
+      htmlContent = htmlContent.replace(
+        /<\/head>/,
+        // `<meta property="og:image" content="${compressedImageBase64}" />\n` +
+        `<meta property="og:image" content="https://final-ssr-production.up.railway.app/image-proxy?imageUrl=${newsData.nwsFeedMedia[0].webimgpath}&width=500&height=300&quality=80" />\n` +
+          `<meta name="description" content="${shortDescription}" />\n</head>`
+      );
+      htmlContent = htmlContent.replace(
+        /<title>.*<\/title>/,
+        `<title>${subject}</title>`
+      );
+
+      res.send(htmlContent);
+    } catch (error) {
+      // In case of error, fallback to default image and metadata
+      htmlContent = htmlContent.replace(
+        /<\/head>/,
+        `<meta property="og:image" content="https://coffeeweb.s3.amazonaws.com/ttegzwmq.hjf-CoffeeWeb_Logo_White_Background_Blue_Text-(1).png" />\n` +
+          `<meta name="description" content="This app provides end-to-end information about the Global Coffee Industry." />\n</head>`
+      );
+
+      htmlContent = htmlContent.replace(
+        /<title>.*<\/title>/,
+        `<title>CoffeeWeb</title>`
+      );
+
+      res.send(htmlContent);
+    }
+  } else {
+    // Default fallback for non-news pages
     htmlContent = htmlContent.replace(
       /<\/head>/,
       `<meta property="og:image" content="https://coffeeweb.s3.amazonaws.com/ttegzwmq.hjf-CoffeeWeb_Logo_White_Background_Blue_Text-(1).png" />\n` +
@@ -176,76 +229,7 @@ app.get("*", async (req, res) => {
     );
 
     res.send(htmlContent);
-  } else if (/chrome|firefox|safari|edge|opera|msie|trident/i.test(userAgent)) {
-    // User agent is a browser
-    res.send("Hello from a browser!");
   }
-
-  // if (req.path.includes("/coffeenewsfeeds") && req.query.newsId) {
-  //   const apiUrl = `https://dev-api.devptest.com/api/news/GetNewsAndMediaById/${req.query.newsId}`;
-  //   const token =
-  //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIxNDc0ODM2NDYiLCJuYmYiOjE3Mzk5NjA5MjksImV4cCI6MTc0MDU2NTcyOSwiaWF0IjoxNzM5OTYwOTI5fQ.-E9DZ0iLiVpa_7J_46ajwO9lxUv-eII0V6dpikjExaA"; // Replace with the actual token
-
-  //   try {
-  //     const response = await axios.get(apiUrl, {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`
-  //       }
-  //     });
-  //     const newsData = response.data.returnLst[0];
-  //     const originalImageUrl =
-  //       newsData.nwsFeedMedia[0].webimgpath ||
-  //       // "https://coffeeweb.s3.ap-south-1.amazonaws.com/coffeenewsfeeds/Certified+Lots.png" ||
-  //       "https://coffeeweb.s3.ap-south-1.amazonaws.com/coffeeweb_menu_icons/CoffeeWeb_Logo_White_Background_Blue_Text.png";
-  //     const shortDescription =
-  //       newsData.shortDescription || "This is coffee news feeds";
-  //     const subject = newsData.subject || "This is coffee news feeds";
-
-  //     // console.log(originalImageUrl);
-  //     // console.log(compressedImageBase64);
-
-  //     htmlContent = htmlContent.replace(
-  //       /<\/head>/,
-  //       // `<meta property="og:image" content="${compressedImageBase64}" />\n` +
-  //       `<meta property="og:image" content="https://final-ssr-production.up.railway.app/image-proxy?imageUrl=${newsData.nwsFeedMedia[0].webimgpath}&width=500&height=300&quality=80" />\n` +
-  //         `<meta name="description" content="${shortDescription}" />\n</head>`
-  //     );
-  //     htmlContent = htmlContent.replace(
-  //       /<title>.*<\/title>/,
-  //       `<title>${subject}</title>`
-  //     );
-
-  //     res.send(htmlContent);
-  //   } catch (error) {
-  //     // In case of error, fallback to default image and metadata
-  //     htmlContent = htmlContent.replace(
-  //       /<\/head>/,
-  //       `<meta property="og:image" content="https://coffeeweb.s3.amazonaws.com/ttegzwmq.hjf-CoffeeWeb_Logo_White_Background_Blue_Text-(1).png" />\n` +
-  //         `<meta name="description" content="This app provides end-to-end information about the Global Coffee Industry." />\n</head>`
-  //     );
-
-  //     htmlContent = htmlContent.replace(
-  //       /<title>.*<\/title>/,
-  //       `<title>CoffeeWeb</title>`
-  //     );
-
-  //     res.send(htmlContent);
-  //   }
-  // } else {
-  //   // Default fallback for non-news pages
-  //   htmlContent = htmlContent.replace(
-  //     /<\/head>/,
-  //     `<meta property="og:image" content="https://coffeeweb.s3.amazonaws.com/ttegzwmq.hjf-CoffeeWeb_Logo_White_Background_Blue_Text-(1).png" />\n` +
-  //       `<meta name="description" content="This app provides end-to-end information about the Global Coffee Industry." />\n</head>`
-  //   );
-
-  //   htmlContent = htmlContent.replace(
-  //     /<title>.*<\/title>/,
-  //     `<title>CoffeeWeb</title>`
-  //   );
-
-  //   res.send(htmlContent);
-  // }
 });
 
 app.listen(5000, () => {
