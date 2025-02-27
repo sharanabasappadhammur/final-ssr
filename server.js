@@ -157,6 +157,20 @@ app.get("*", async (req, res) => {
   const filePath = path.join(__dirname, "build", "index.html");
   let htmlContent = fs.readFileSync(filePath, "utf8");
 
+  const userAgent = req.headers["user-agent"].toLowerCase();
+
+  if (
+    /facebook|fbav|fban|twitter|instagram|linkedin|whatsapp|snapchat|googlebot|bingbot|pinterest|reddit|tiktok/i.test(
+      userAgent
+    )
+  ) {
+    // User agent is from a social media platform or a bot
+    res.send("Hello from a social media platform or a bot!");
+  } else if (/chrome|firefox|safari|edge|opera|msie|trident/i.test(userAgent)) {
+    // User agent is a browser
+    res.send("Hello from a browser!");
+  }
+
   if (req.path.includes("/coffeenewsfeeds") && req.query.newsId) {
     const apiUrl = `https://dev-api.devptest.com/api/news/GetNewsAndMediaById/${req.query.newsId}`;
     const token =
