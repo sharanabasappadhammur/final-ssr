@@ -6,7 +6,7 @@ function Home() {
     <div>
       <h1>Home Page...........................</h1>
       <p>Welcome to the Vite + React app with routing!</p>
-      <Link to={`/dashboard/coffeenews`}>Read more</Link>
+      <Link to={`/coffeenewsfeeds`}>Read more</Link>
     </div>
   );
 }
