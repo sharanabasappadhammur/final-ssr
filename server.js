@@ -7,13 +7,13 @@ const sharp = require("sharp");
 const app = express();
 
 // Serve static files from the 'build' directory
-app.use((req, res, next) => {
-  if (req.path === "/" || req.path === "/index.html") {
-    next();
-  } else {
-    express.static(path.join(__dirname, "./build"))(req, res, next);
-  }
-});
+// app.use((req, res, next) => {
+//   if (req.path === "/" || req.path === "/index.html") {
+//     next();
+//   } else {
+//     express.static(path.join(__dirname, "./build"))(req, res, next);
+//   }
+// });
 
 app.get("/image-proxy", async (req, res) => {
   const { imageUrl, width, height, quality } = req.query;
