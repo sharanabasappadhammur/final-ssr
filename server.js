@@ -99,7 +99,7 @@ app.get("*", async (req, res) => {
 
       htmlContent = htmlContent.replace(
         /<title>.*<\/title>/,
-        `<title>CoffeeWebgg</title>`
+        `<title>CoffeeWeb</title>`
       );
 
       res.send(htmlContent);
