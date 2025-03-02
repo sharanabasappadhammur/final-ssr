@@ -7,15 +7,15 @@ const sharp = require("sharp");
 const app = express();
 
 // Serve static files from the 'build' directory
-// app.use((req, res, next) => {
-//   if (req.path === "/" || req.path === "/index.html") {
-//     next();
-//   } else {
-//     express.static(path.join(__dirname, "./build"))(req, res, next);
-//   }
-// });
+app.use((req, res, next) => {
+  if (req.path === "/" || req.path === "/index.html") {
+    next();
+  } else {
+    express.static(path.join(__dirname, "./build"))(req, res, next);
+  }
+});
 
-app.get("/image-proxy", async (req, res) => {
+app.get("/image-resize", async (req, res) => {
   const { imageUrl, width, height, quality } = req.query;
 
   try {
@@ -23,13 +23,11 @@ app.get("/image-proxy", async (req, res) => {
     const response = await axios({
       url:
         imageUrl ||
-        "https://coffeeweb.s3.ap-south-1.amazonaws.com/coffeenewsfeeds/Vietnam+Diff.png",
+        "https://coffeeweb.s3.ap-south-1.amazonaws.com/coffeeweb_menu_icons/CoffeeWeb_Logo_White_Background_Blue_Text.png",
       responseType: "arraybuffer"
     });
 
     const imageBuffer = Buffer.from(response.data, "binary");
-
-    console.log("tetwtst");
 
     // Resize and compress the image using sharp
     const outputBuffer = await sharp(imageBuffer)
@@ -52,15 +50,15 @@ app.get("/image-proxy", async (req, res) => {
 app.get("*", async (req, res) => {
   const filePath = path.join(__dirname, "build", "index.html");
   let htmlContent = fs.readFileSync(filePath, "utf8");
-
   const userAgent = req.headers["user-agent"].toLowerCase();
 
+  console;
   if (
     /facebook|fbav|fban|twitter|instagram|linkedin|whatsapp|snapchat|googlebot|bingbot|pinterest|reddit|tiktok/i.test(
       userAgent
     ) &&
-    req.path.includes("/coffeenewsfeeds") &&
-    req.query.newsId
+    ((req.path.includes("/coffeenewsfeeds") && req.query.newsId) ||
+      req.path.includes("/news"))
   ) {
     const apiUrl = `https://dev-api.devptest.com/api/news/GetNewsAndMediaById/${req.query.newsId}`;
     const token =
@@ -75,19 +73,14 @@ app.get("*", async (req, res) => {
       const newsData = response.data.returnLst[0];
       const originalImageUrl =
         newsData.nwsFeedMedia[0].webimgpath ||
-        // "https://coffeeweb.s3.ap-south-1.amazonaws.com/coffeenewsfeeds/Certified+Lots.png" ||
         "https://coffeeweb.s3.ap-south-1.amazonaws.com/coffeeweb_menu_icons/CoffeeWeb_Logo_White_Background_Blue_Text.png";
       const shortDescription =
         newsData.shortDescription || "This is coffee news feeds";
       const subject = newsData.subject || "This is coffee news feeds";
 
-      // console.log(originalImageUrl);
-      // console.log(compressedImageBase64);
-
       htmlContent = htmlContent.replace(
         /<\/head>/,
-        // `<meta property="og:image" content="${compressedImageBase64}" />\n` +
-        `<meta property="og:image" content="https://final-ssr-production.up.railway.app/image-proxy?imageUrl=${newsData.nwsFeedMedia[0].webimgpath}&width=500&height=300&quality=80" />\n` +
+        `<meta property="og:image" content="${window.location.origin}/image-resize?imageUrl=${originalImageUrl}&width=500&height=300&quality=80" />\n` +
           `<meta name="description" content="${shortDescription}" />\n</head>`
       );
       htmlContent = htmlContent.replace(
@@ -97,12 +90,10 @@ app.get("*", async (req, res) => {
 
       res.send(htmlContent);
     } catch (error) {
-      console.log(error);
-
       // In case of error, fallback to default image and metadata
       htmlContent = htmlContent.replace(
         /<\/head>/,
-        `<meta property="og:image" content="https://coffeeweb.s3.amazonaws.com/ttegzwmq.hjf-CoffeeWeb_Logo_White_Background_Blue_Text-(1).png" />\n` +
+        `<meta property="og:image" content="https://coffeeweb.s3.ap-south-1.amazonaws.com/coffeeweb_menu_icons/CoffeeWeb_Logo_White_Background_Blue_Text.png" />\n` +
           `<meta name="description" content="This app provides end-to-end information about the Global Coffee Industry." />\n</head>`
       );
 
@@ -117,7 +108,7 @@ app.get("*", async (req, res) => {
     // Default fallback for non-news pages
     htmlContent = htmlContent.replace(
       /<\/head>/,
-      `<meta property="og:image" content="https://coffeeweb.s3.amazonaws.com/ttegzwmq.hjf-CoffeeWeb_Logo_White_Background_Blue_Text-(1).png" />\n` +
+      `<meta property="og:image" content="https://coffeeweb.s3.ap-south-1.amazonaws.com/coffeeweb_menu_icons/CoffeeWeb_Logo_White_Background_Blue_Text.png" />\n` +
         `<meta name="description" content="This app provides end-to-end information about the Global Coffee Industry." />\n</head>`
     );
 
