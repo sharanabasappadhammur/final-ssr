@@ -52,6 +52,8 @@ app.get("*", async (req, res) => {
   let htmlContent = fs.readFileSync(filePath, "utf8");
   const userAgent = req.headers["user-agent"].toLowerCase();
 
+  console.log(req.headers.host);
+
   if (
     (/facebook|fbav|fban|twitter|instagram|linkedin|whatsapp|snapchat|googlebot|bingbot|pinterest|reddit|tiktok/i.test(
       userAgent
@@ -94,8 +96,6 @@ app.get("*", async (req, res) => {
 
     try {
       const response = await axios.get(apiUrl);
-
-      console.log(currentHost);
 
       const newsData = response.data.returnLst[0];
       const originalImageUrl =
