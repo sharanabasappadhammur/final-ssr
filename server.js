@@ -52,24 +52,51 @@ app.get("*", async (req, res) => {
   let htmlContent = fs.readFileSync(filePath, "utf8");
   const userAgent = req.headers["user-agent"].toLowerCase();
 
-  console;
   if (
-    /facebook|fbav|fban|twitter|instagram|linkedin|whatsapp|snapchat|googlebot|bingbot|pinterest|reddit|tiktok/i.test(
+    (/facebook|fbav|fban|twitter|instagram|linkedin|whatsapp|snapchat|googlebot|bingbot|pinterest|reddit|tiktok/i.test(
       userAgent
     ) &&
-    ((req.path.includes("/coffeenewsfeeds") && req.query.newsId) ||
+      req.path.includes("/coffeenewsfeeds") &&
+      req.query.newsId) ||
+    (/facebook|fbav|fban|twitter|instagram|linkedin|whatsapp|snapchat|googlebot|bingbot|pinterest|reddit|tiktok/i.test(
+      userAgent
+    ) &&
       req.path.includes("/news"))
   ) {
-    const apiUrl = `https://dev-api.devptest.com/api/news/GetNewsAndMediaById/${req.query.newsId}`;
-    const token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjIxNDc0ODM2NDYiLCJuYmYiOjE3NDA0ODYxOTksImV4cCI6MTc0MTA5MDk5OSwiaWF0IjoxNzQwNDg2MTk5fQ.BG4EmnGyb_AW3ikpfcMDE1DqtTeuV4cJVdIBhhhLu7c"; // Replace with the actual token
+    const API_BASE_URL = [
+      {
+        clientUrl: "dev-pwa.devptest.com",
+        apiBaseUrl: "https://dev-api.devptest.com"
+      },
+      {
+        clientUrl:
+          "pp-coffeewebtech-c7dja8bdgkh9cpcm.southindia-01.azurewebsites.net",
+        apiBaseUrl: "https://pp-coffeewebapi.devptest.com"
+      },
+      {
+        clientUrl: "coffeeweb.com",
+        apiBaseUrl: "https://www.coffeewebapi.com"
+      }
+    ];
+
+    const currentHost = req.headers.host;
+
+    const matchedConfig = API_BASE_URL.find((config) =>
+      currentHost.includes(config.clientUrl)
+    );
+
+    const apiBaseUrl =
+      matchedConfig?.apiBaseUrl || "https://dev-api.devptest.com";
+
+    const apiUrl = `${apiBaseUrl}/api/news/getNewsMetaTagInformation/${
+      req.query.newsId || 0
+    }/${req.query.newsId ? "NA" : req.params[0].split("/").pop()}`;
 
     try {
-      const response = await axios.get(apiUrl, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+      const response = await axios.get(apiUrl);
+
+      console.log(currentHost);
+
       const newsData = response.data.returnLst[0];
       const originalImageUrl =
         newsData.nwsFeedMedia[0].webimgpath ||
@@ -80,7 +107,7 @@ app.get("*", async (req, res) => {
 
       htmlContent = htmlContent.replace(
         /<\/head>/,
-        `<meta property="og:image" content="${window.location.origin}/image-resize?imageUrl=${originalImageUrl}&width=500&height=300&quality=80" />\n` +
+        `<meta property="og:image" content="https://${currentHost}/image-resize?imageUrl=${originalImageUrl}&width=500&height=300&quality=80" />\n` +
           `<meta name="description" content="${shortDescription}" />\n</head>`
       );
       htmlContent = htmlContent.replace(
@@ -121,6 +148,6 @@ app.get("*", async (req, res) => {
   }
 });
 
-app.listen(5000, () => {
-  console.log(`Server is running on http://localhost:${5000}`);
+app.listen(5001, () => {
+  console.log(`Server is running on http://localhost:${5001}`);
 });
