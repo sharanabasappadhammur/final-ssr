@@ -53,15 +53,8 @@ app.get("*", async (req, res) => {
   const userAgent = req.headers["user-agent"].toLowerCase();
 
   if (
-    (/facebook|fbav|fban|twitter|instagram|linkedin|whatsapp|snapchat|googlebot|bingbot|pinterest|reddit|tiktok|teams/i.test(
-      userAgent
-    ) &&
-      req.path.includes("/coffeenewsfeeds") &&
-      req.query.newsId) ||
-    (/facebook|fbav|fban|twitter|instagram|linkedin|whatsapp|snapchat|googlebot|bingbot|pinterest|reddit|tiktok|teams/i.test(
-      userAgent
-    ) &&
-      req.path.includes("/news"))
+    (req.path.includes("/coffeenewsfeeds") && req.query.newsId) ||
+    req.path.includes("/news")
   ) {
     const API_BASE_URL = [
       {
